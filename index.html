@@ -146,14 +146,18 @@
         
         .secret-admin-btn {
             position: fixed;
-            bottom: 5px;
-            right: 5px;
-            width: 15px;
-            height: 15px;
-            background: transparent;
-            border: none;
+            bottom: 8px;
+            right: 8px;
+            width: 18px;
+            height: 18px;
+            background: rgba(56, 189, 248, 0.15);
+            border-radius: 50%;
+            border: 1px solid rgba(56, 189, 248, 0.3);
             cursor: pointer;
             z-index: 9999;
+        }
+        .secret-admin-btn:hover {
+            background: rgba(56, 189, 248, 0.5);
         }
 
         .progress-bar-bg { width: 100%; height: 8px; background: #0f172a; border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
@@ -167,7 +171,6 @@
         .option-btn { background: #0f172a; color: #f8fafc; border: 2px solid #334155; padding: 14px 16px; border-radius: 10px; text-align: left; font-size: 16px; cursor: pointer; transition: 0.2s; }
         .option-btn:hover:not(:disabled) { border-color: #38bdf8; background: #1e293b; }
         .option-btn:disabled { cursor: default; }
-        .option-btn.eliminated { opacity: 0.22; text-decoration: line-through; }
         .option-btn.correct { background: #065f46; border-color: #10b981; color: #ffffff; }
         .option-btn.wrong { background: #7f1d1d; border-color: #ef4444; color: #ffffff; }
         
@@ -199,16 +202,11 @@
         .ai-box { background: linear-gradient(145deg, #1e1b4b, #0f172a); border: 1px solid #818cf8; border-radius: 14px; padding: 18px; margin-bottom: 20px; text-align: left; }
         .ai-header { display: flex; align-items: center; gap: 8px; color: #a5b4fc; font-weight: bold; font-size: 16px; margin-bottom: 10px; }
         .ai-text { color: #e2e8f0; font-size: 14px; line-height: 1.6; }
-        .skill-bars { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
-        .skill-row { font-size: 13px; }
-        .skill-label { display: flex; justify-content: space-between; margin-bottom: 3px; color: #cbd5e1; }
-        .skill-track { width: 100%; height: 6px; background: #1e293b; border-radius: 4px; overflow: hidden; }
-        .skill-fill { height: 100%; background: #818cf8; }
     </style>
 </head>
 <body>
 
-<button class="secret-admin-btn" onclick="openAdminModal()"></button>
+<button class="secret-admin-btn" onclick="openAdminModal()" title=""></button>
 
 <div class="container">
     <div id="auth-screen">
@@ -292,7 +290,6 @@
             <div class="question-text" id="question-text">Savol matni...</div>
         </div>
         <div class="options" id="options-container"></div>
-        <button class="btn btn-ai" id="ai-hint-btn" onclick="useAIHint()">🤖 AI Yordam 50/50 (2 ta qoldi)</button>
     </div>
 
     <div id="result-screen" class="hidden">
@@ -322,12 +319,6 @@
         </div>
 
         <button class="btn btn-gold hidden" id="download-img-btn" onclick="downloadCertificateImage()">🖼️ VIP Sertifikatni Rasm sifatida saqlash (PNG)</button>
-
-        <div class="ai-box">
-            <div class="ai-header">🤖 AI Intellektual Tahlil va Tavsiya</div>
-            <div class="ai-text" id="ai-analysis-text">AI natijalarni tahlil qilmoqda...</div>
-            <div class="skill-bars" id="ai-skill-bars"></div>
-        </div>
         
         <button class="btn" onclick="backToMenu()">🏠 Asosiy menyuga qaytish</button>
     </div>
@@ -532,20 +523,20 @@
 
     const questionBank = {
         kids: [
-            { skill: "Matematika", topic: "Ketma-ketlik", q: "Qatorni davom ettiring: 2, 4, 8, 16, ...", options: ["24", "32", "20", "30"], answer: 1, exp: "16 x 2 = 32." },
-            { skill: "Mantiq", topic: "Mantiq", q: "3 ta mushuk 3 ta sichqonni 3 daqiqada tutsa, 1 ta mushuk 1 ta sichqonni necha daqiqada tutadi?", options: ["1 daqiqa", "3 daqiqa", "9 daqiqa", "6 daqiqa"], answer: 1, exp: "3 daqiqada." },
-            { skill: "Diqqat", topic: "Diqqat", q: "Qorong‘i xonaga kirdingiz. Sizda 1 ta gugurt bor. Xonada sham, gaz plitasi va pechka bor. Birinchi nimani yoqasiz?", options: ["Shamni", "Gaz plitasini", "Gugurtni", "Pechni"], answer: 2, exp: "Avval gugurtni." },
-            { skill: "Mantiq", topic: "Fizika", q: "Qaysi biri og‘irroq: 1 kg temirmi yoki 1 kg paxta?", options: ["1 kg temir", "1 kg paxta", "Ikkalasi teng", "Temir og‘ir"], answer: 2, exp: "Ikkalasi teng." },
-            { skill: "Mantiq", topic: "Oilaviy", q: "Oilada 5 ta o‘g‘il bor. Har bir o‘g‘ilning bittadan singlisi bor. Jami nechta farzand bor?", options: ["10 ta", "6 ta", "5 ta", "7 ta"], answer: 1, exp: "5 o‘g‘il + 1 umumiy singil = 6." }
+            { skill: "Matematika", topic: "Ketma-ketlik", q: "Qatorni davom ettiring: 2, 4, 8, 16, ...", options: ["24", "32", "20", "30"], answer: 1 },
+            { skill: "Mantiq", topic: "Mantiq", q: "3 ta mushuk 3 ta sichqonni 3 daqiqada tutsa, 1 ta mushuk 1 ta sichqonni necha daqiqada tutadi?", options: ["1 daqiqa", "3 daqiqa", "9 daqiqa", "6 daqiqa"], answer: 1 },
+            { skill: "Diqqat", topic: "Diqqat", q: "Qorong‘i xonaga kirdingiz. Sizda 1 ta gugurt bor. Xonada sham, gaz plitasi va pechka bor. Birinchi nimani yoqasiz?", options: ["Shamni", "Gaz plitasini", "Gugurtni", "Pechni"], answer: 2 },
+            { skill: "Mantiq", topic: "Fizika", q: "Qaysi biri og‘irroq: 1 kg temirmi yoki 1 kg paxta?", options: ["1 kg temir", "1 kg paxta", "Ikkalasi teng", "Temir og‘ir"], answer: 2 },
+            { skill: "Mantiq", topic: "Oilaviy", q: "Oilada 5 ta o‘g‘il bor. Har bir o‘g‘ilning bittadan singlisi bor. Jami nechta farzand bor?", options: ["10 ta", "6 ta", "5 ta", "7 ta"], answer: 1 }
         ],
         adults: [
-            { skill: "Matematika", topic: "Sonlar qatori", q: "Qatorni davom ettiring: 2, 6, 12, 20, 30, ...", options: ["36", "40", "42", "44"], answer: 2, exp: "30 + 12 = 42." },
-            { skill: "Matematika", topic: "Algebra", q: "Kitob va daftar birgalikda 11000 so‘m. Kitob daftardan 10000 so‘m qimmat. Daftar necha so‘m?", options: ["1000 so‘m", "500 so‘m", "1500 so‘m", "2000 so‘m"], answer: 1, exp: "500 so‘m." },
-            { skill: "Mantiq", topic: "Sillogizm", q: "Agar barcha Zlar X bo‘lsa, va ba'zi Xlar Y bo‘lsa, u holda:", options: ["Barcha Zlar Y", "Ba'zi Zlar Y bo‘lishi mumkin", "Hech bir Z Y emas", "Barcha Ylar Z"], answer: 1, exp: "Ehtimoliy kesishish." }
+            { skill: "Matematika", topic: "Sonlar qatori", q: "Qatorni davom ettiring: 2, 6, 12, 20, 30, ...", options: ["36", "40", "42", "44"], answer: 2 },
+            { skill: "Matematika", topic: "Algebra", q: "Kitob va daftar birgalikda 11000 so‘m. Kitob daftardan 10000 so‘m qimmat. Daftar necha so‘m?", options: ["1000 so‘m", "500 so‘m", "1500 so‘m", "2000 so‘m"], answer: 1 },
+            { skill: "Mantiq", topic: "Sillogizm", q: "Agar barcha Zlar X bo‘lsa, va ba'zi Xlar Y bo‘lsa, u holda:", options: ["Barcha Zlar Y", "Ba'zi Zlar Y bo‘lishi mumkin", "Hech bir Z Y emas", "Barcha Ylar Z"], answer: 1 }
         ],
         expert: [
-            { skill: "Matematika", topic: "Murakkab qator", q: "Qatorni davom ettiring: 1, 4, 27, 256, ...", options: ["625", "1024", "3125", "1296"], answer: 2, exp: "5⁵ = 3125." },
-            { skill: "Matematika", topic: "Kombinatorika", q: "Majlisda 10 kishi bir-biri bilan bir martadan qo‘l berib ko‘rishdi. Jami nechta qo‘l siqish bo‘lgan?", options: ["100", "90", "45", "50"], answer: 2, exp: "45 ta." }
+            { skill: "Matematika", topic: "Murakkab qator", q: "Qatorni davom ettiring: 1, 4, 27, 256, ...", options: ["625", "1024", "3125", "1296"], answer: 2 },
+            { skill: "Matematika", topic: "Kombinatorika", q: "Majlisda 10 kishi bir-biri bilan bir martadan qo‘l berib ko‘rishdi. Jami nechta qo‘l siqish bo‘lgan?", options: ["100", "90", "45", "50"], answer: 2 }
         ]
     };
 
@@ -557,8 +548,6 @@
     let timerInterval = null;
     let totalTimeSpent = 0;
     let isAnswered = false;
-    let aiHintsLeft = 2;
-    let hintUsedThisQuestion = false;
     const QUESTIONS_PER_TEST = 5;
 
     function shuffleArray(array) {
@@ -574,7 +563,6 @@
         currentQuestionIndex = 0;
         score = 0;
         totalTimeSpent = 0;
-        aiHintsLeft = 2;
 
         timeLimit = category === 'kids' ? 35 : (category === 'adults' ? 30 : 25);
         activeQuestions = shuffleArray(questionBank[category]).slice(0, QUESTIONS_PER_TEST);
@@ -586,7 +574,6 @@
 
     function showQuestion() {
         isAnswered = false;
-        hintUsedThisQuestion = false;
         const currentQ = activeQuestions[currentQuestionIndex];
         
         document.getElementById('progress-label').innerText = `Savol: ${currentQuestionIndex + 1} / ${QUESTIONS_PER_TEST}`;
@@ -627,8 +614,6 @@
     function updateTimerUI() {
         const timerBox = document.getElementById('timer-box');
         timerBox.innerText = `⏳ ${timeLeft}s`;
-        if (timeLeft <= 5) timerBox.classList.add('timer-warning');
-        else timerBox.classList.remove('timer-warning');
     }
 
     function handleAnswer(selectedIndex, clickedBtn) {
@@ -652,7 +637,7 @@
             playSound('wrong');
         }
 
-        setTimeout(nextQuestion, 850);
+        setTimeout(nextQuestion, 900);
     }
 
     function handleTimeOut() {
@@ -665,13 +650,16 @@
         allButtons.forEach(b => b.disabled = true);
         allButtons[correctIndex].classList.add('correct');
 
-        setTimeout(nextQuestion, 850);
+        setTimeout(nextQuestion, 900);
     }
 
     function nextQuestion() {
         currentQuestionIndex++;
-        if (currentQuestionIndex < QUESTIONS_PER_TEST) showQuestion();
-        else showResult();
+        if (currentQuestionIndex < QUESTIONS_PER_TEST) {
+            showQuestion();
+        } else {
+            showResult();
+        }
     }
 
     function generateSecureHash(name, score, iq) {
