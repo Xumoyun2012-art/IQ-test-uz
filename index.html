@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xumoyunni loyha ishi</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #060913, #111827);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        .container {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 780px;
+            padding: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+            text-align: center;
+        }
+        h1 {
+            color: #38bdf8;
+            margin-bottom: 8px;
+            font-size: 27px;
+        }
+        p.subtitle {
+            color: #94a3b8;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .btn {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 13px 22px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover:not(:disabled) {
+            background: #0369a1;
+            transform: translateY(-1px);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-child { background: #10b981; }
+        .btn-child:hover { background: #059669; }
+        .btn-expert { background: linear-gradient(90deg, #7c3aed, #db2777); }
+        .btn-gold { background: linear-gradient(90deg, #d97706, #f59e0b); color: #000; font-weight: 800; }
+        .btn-ai { background: linear-gradient(90deg, #4f46e5, #06b6d4); }
+        .btn-secondary { background: #334155; color: #f8fafc; }
+        .hidden { display: none !important; }
+        
+        .auth-box {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 14px;
+            border: 1px solid #334155;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+        .input-group {
+            margin-bottom: 14px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: #cbd5e1;
+            margin-bottom: 5px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background: #1e293b;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+        }
+        .input-field:focus { border-color: #38bdf8; }
+        .avatar-select {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            align-items: center;
+        }
+        .avatar-preview {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid #38bdf8;
+            object-fit: cover;
+            background: #334155;
+        }
+        
+        .leaderboard-container {
+            text-align: left;
+            max-height: 340px;
+            overflow-y: auto;
+            margin-top: 15px;
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid #334155;
+        }
+        .lb-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-bottom: 1px solid #1e293b;
+        }
+        .lb-item:last-child { border-bottom: none; }
+        .lb-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .lb-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .secret-admin-btn {
+            position: fixed;
+            bottom: 8px;
+            right: 8px;
+            width: 18px;
+            height: 18px;
+            background: rgba(56, 189, 248, 0.15);
+            border-radius: 50%;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            cursor: pointer;
+            z-index: 9999;
+        }
+        .secret-admin-btn:hover {
+            background: rgba(56, 189, 248, 0.5);
+        }
+
+        .progress-bar-bg { width: 100%; height: 8px; background: #0f172a; border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: #38bdf8; width: 0%; transition: width 0.25s ease; }
+        .header-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; font-size: 14px; color: #cbd5e1; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .topic-badge { background: #0f172a; border: 1px solid #475569; padding: 4px 10px; border-radius: 6px; font-size: 12px; color: #38bdf8; display: inline-block; margin-bottom: 10px; }
+        .timer-box { background: #0f172a; border: 1px solid #38bdf8; color: #38bdf8; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 15px; }
+        .timer-warning { border-color: #ef4444; color: #ef4444; }
+        .question-box { text-align: left; margin-bottom: 20px; }
+        .question-text { font-size: 18px; font-weight: 600; line-height: 1.5; }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn { background: #0f172a; color: #f8fafc; border: 2px solid #334155; padding: 13px 16px; border-radius: 10px; text-align: left; font-size: 15px; cursor: pointer; transition: 0.15s; }
+        .option-btn:hover:not(:disabled) { border-color: #38bdf8; background: #1e293b; }
+        .option-btn:disabled { cursor: default; }
+        .option-btn.eliminated { opacity: 0.25; text-decoration: line-through; }
+        .option-btn.correct { background: #065f46; border-color: #10b981; color: #ffffff; }
+        .option-btn.wrong { background: #7f1d1d; border-color: #ef4444; color: #ffffff; }
+        
+        .certificate-card {
+            background: linear-gradient(145deg, #0f172a, #172554);
+            border: 2px solid #38bdf8;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 18px;
+            position: relative;
+        }
+        .certificate-card.vip-gold {
+            background: linear-gradient(145deg, #1c1917, #451a03);
+            border: 3px solid #fbbf24;
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.35);
+        }
+        .vip-ribbon { background: linear-gradient(90deg, #f59e0b, #fbbf24); color: #000; font-weight: 900; font-size: 12px; letter-spacing: 1.5px; padding: 5px 14px; border-radius: 20px; display: inline-block; margin-bottom: 10px; text-transform: uppercase; }
+        .user-title { font-size: 19px; color: #f8fafc; font-weight: bold; margin-bottom: 4px; }
+        .cert-id { font-size: 12px; color: #94a3b8; font-family: monospace; margin-bottom: 8px; }
+        .iq-score { font-size: 64px; font-weight: 900; color: #38bdf8; margin: 5px 0; }
+        .vip-gold .iq-score { color: #fbbf24; }
+        .level-badge { display: inline-block; background: #0284c7; padding: 6px 18px; border-radius: 20px; font-weight: bold; margin-bottom: 12px; font-size: 14px; }
+        .vip-gold .level-badge { background: #d97706; color: #fff; }
+        .secure-hash-box { background: rgba(0, 0, 0, 0.4); border: 1px solid #fbbf24; color: #fde68a; padding: 8px; border-radius: 6px; font-size: 11px; font-family: monospace; margin-top: 10px; letter-spacing: 1px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; background: rgba(15, 23, 42, 0.85); padding: 12px; border-radius: 10px; margin-top: 15px; border: 1px solid #334155; }
+        .stat-item span { display: block; font-size: 12px; color: #94a3b8; }
+        .stat-item strong { font-size: 15px; color: #f8fafc; }
+
+        .ai-chat-panel {
+            background: #0f172a;
+            border: 1px solid #4f46e5;
+            border-radius: 14px;
+            padding: 16px;
+            margin-top: 15px;
+            text-align: left;
+        }
+        .ai-messages {
+            max-height: 220px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-right: 4px;
+        }
+        .msg-ai {
+            background: #1e1b4b;
+            border-left: 3px solid #6366f1;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #e2e8f0;
+        }
+        .msg-user {
+            background: #1e293b;
+            border-right: 3px solid #38bdf8;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            align-self: flex-end;
+            color: #f8fafc;
+        }
+        .ai-input-row {
+            display: flex;
+            gap: 8px;
+        }
+        .record-badge {
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #fbbf24;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<button class="secret-admin-btn" onclick="openAdminModal()" title=""></button>
+
+<div class="container">
+    <div id="auth-screen">
+        <h1>🤖 AI IQ 230 Pro Platformasi</h1>
+        <p class="subtitle">O‘z profilingizni yarating, Gmail orqali kiring va Top 100 reytingiga chiqing.</p>
+
+        <div class="auth-box">
+            <div class="input-group">
+                <label>Kirish turi:</label>
+                <select id="login-mode" class="input-field" onchange="toggleLoginMode()">
+                    <option value="new">➕ Yangi profil yaratish</option>
+                    <option value="existing">👤 O‘zingizning profilingizga kirish</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="user-email">Google Akkount (Gmail):</label>
+                <input type="email" id="user-email" class="input-field" placeholder="masalan: user@gmail.com">
+            </div>
+
+            <div class="input-group" id="name-group">
+                <label for="user-name">Ism-familiyangiz:</label>
+                <input type="text" id="user-name" class="input-field" placeholder="Masalan: Xumoyun Xolmurodov" maxlength="30">
+            </div>
+
+            <div class="input-group" id="avatar-group">
+                <label>Profil uchun rasm yuklash:</label>
+                <div class="avatar-select">
+                    <input type="file" id="avatar-file" class="input-field" accept="image/*" onchange="previewAvatar(event)">
+                    <img id="avatar-preview" class="avatar-preview" src="https://via.placeholder.com/50" alt="Rasm">
+                </div>
+            </div>
+
+            <button class="btn btn-child" onclick="handleAuth()">🚀 Tizimga kirish</button>
+        </div>
+
+        <button class="btn btn-secondary" onclick="showLeaderboard()">🏆 Top 100 O‘rinni Ko‘rish</button>
+    </div>
+
+    <div id="leaderboard-screen" class="hidden">
+        <h1>🏆 Top 100 Intellektual Reytingi</h1>
+        <p class="subtitle">Platformadagi eng yuqori IQ natija ko‘rsatgan foydalanuvchilar.</p>
+        <div class="leaderboard-container" id="leaderboard-list"></div>
+        <button class="btn btn-secondary" style="margin-top: 15px;" onclick="backToAuth()">⬅️ Orqaga qaytish</button>
+    </div>
+
+    <div id="admin-screen" class="hidden">
+        <h1>👑 Admin Kuzatuv Paneli</h1>
+        <p class="subtitle">Barcha ro‘yxatdan o‘tgan foydalanuvchilar va ularning natijalari.</p>
+        <div class="leaderboard-container" id="admin-users-list"></div>
+        <button class="btn btn-secondary" style="margin-top: 15px;" onclick="backToAuth()">⬅️ Chiqish</button>
+    </div>
+
+    <div id="start-screen" class="hidden">
+        <h1 id="welcome-user-title">Xush kelibsiz!</h1>
+        <p class="subtitle">Sinov turini tanlang yoki Shaxsiy AI bilan suhbatlashing.</p>
+        
+        <div class="record-badge" id="record-display">🏆 Shaxsiy rekord: Hali o‘yin o‘ynalmagan</div>
+
+        <button class="btn btn-child" onclick="startTest('kids')">🧒 Bolalar (7–13 yosh) • 10 savol</button>
+        <button class="btn" onclick="startTest('adults')">🧑 Kattalar (14+ yosh) • 10 savol</button>
+        <button class="btn btn-expert" onclick="startTest('expert')">🔥 Ekspert Rejim • 10 savol (Maks: 230 IQ + VIP Sertifikat)</button>
+        <button class="btn btn-ai" onclick="toggleAIChat()">🤖 Shaxsiy AI Yordamchiga Savol Berish</button>
+        <button class="btn btn-secondary" onclick="backToAuth()">👤 Profilni o‘zgartirish</button>
+
+        <div id="ai-assistant-box" class="ai-chat-panel hidden">
+            <div style="font-weight:bold; color:#818cf8; margin-bottom:8px;">🤖 Gemini AI Intellektual Yordamchi</div>
+            <div class="ai-messages" id="ai-chat-history">
+                <div class="msg-ai">Salom! Men sizning shaxsiy AI yordamchingizman. Mantiqiy masalalar, matematika, dasturlash yoki istalgan mavzuda savol bering — darhol javob topib beraman!</div>
+            </div>
+            <div class="ai-input-row">
+                <input type="text" id="ai-user-question" class="input-field" placeholder="Savolingizni yozing..." onkeypress="if(event.key==='Enter') askPersonalAI()">
+                <button class="btn btn-ai" style="width:auto; margin-top:0; padding:0 18px;" onclick="askPersonalAI()">Yuborish</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <div class="header-info">
+            <span id="category-label">Sinov</span>
+            <span id="progress-label">1 / 10</span>
+            <div class="timer-box" id="timer-box">⏳ 30s</div>
+        </div>
+        <div class="question-box">
+            <div class="topic-badge" id="topic-label">Mantiq</div>
+            <div class="question-text" id="question-text">Savol matni...</div>
+        </div>
+        <div class="options" id="options-container"></div>
+        <button class="btn btn-ai" id="ai-hint-btn" style="margin-top:14px;" onclick="useAIHint()">🤖 AI 50/50 Yordam (2 ta qoldi)</button>
+    </div>
+
+    <div id="result-screen" class="hidden">
+        <div class="certificate-card" id="cert-card">
+            <div class="vip-ribbon hidden" id="vip-ribbon">⭐ RASMIY VIP ALL-ACCESS SERTIFIKAT ⭐</div>
+            <div class="user-title" id="cert-name">Ishtirokchi natijasi</div>
+            <div class="cert-id" id="cert-id">ID: IQ-2026-0000</div>
+            <div class="iq-score" id="iq-value">230</div>
+            <div class="level-badge" id="iq-level">Mutlaq Daho</div>
+            
+            <div class="secure-hash-box" id="secure-hash-text">🔒 AI SECURE HASH: VERIFIED</div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span>To‘g‘ri javob</span>
+                    <strong id="stat-correct">10 / 10</strong>
+                </div>
+                <div class="stat-item">
+                    <span>Aniqlik</span>
+                    <strong id="stat-accuracy">100%</strong>
+                </div>
+                <div class="stat-item">
+                    <span>Vaqt</span>
+                    <strong id="stat-time">1 daq 20 son</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-chat-panel" style="margin-bottom:15px;">
+            <div style="font-weight:bold; color:#818cf8; margin-bottom:6px;">🤖 AI Natija Tahlili</div>
+            <div id="ai-result-feedback" style="font-size:14px; color:#e2e8f0; line-height:1.5;"></div>
+        </div>
+
+        <button class="btn btn-gold hidden" id="download-img-btn" onclick="downloadCertificateImage()">🖼️ VIP Sertifikatni Rasm sifatida saqlash (PNG)</button>
+        <button class="btn" onclick="backToMenu()">🏠 Asosiy menyuga qaytish</button>
+    </div>
+</div>
+
+<script>
+    let currentUser = null;
+    let baseAvatar = "https://via.placeholder.com/50";
+    let audioCtx = null;
+
+    function initAudio() {
+        if (!audioCtx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) audioCtx = new AudioContext();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(() => {});
+        }
+    }
+
+    function playSound(type) {
+        try {
+            initAudio();
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(110, audioCtx.currentTime + 0.12);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.28);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.28);
+            } else if (type === 'vip') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            }
+        } catch (e) {}
+    }
+
+    function previewAvatar(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                baseAvatar = e.target.result;
+                document.getElementById('avatar-preview').src = baseAvatar;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function toggleLoginMode() {
+        const mode = document.getElementById('login-mode').value;
+        const nameGroup = document.getElementById('name-group');
+        const avatarGroup = document.getElementById('avatar-group');
+        if (mode === 'existing') {
+            nameGroup.classList.add('hidden');
+            avatarGroup.classList.add('hidden');
+        } else {
+            nameGroup.classList.remove('hidden');
+            avatarGroup.classList.remove('hidden');
+        }
+    }
+
+    function handleAuth() {
+        initAudio();
+        const email = document.getElementById('user-email').value.trim();
+        const mode = document.getElementById('login-mode').value;
+        const name = document.getElementById('user-name').value.trim();
+
+        if (!email || !email.includes('@gmail.com')) {
+            alert('Iltimos, to‘g‘ri Google (Gmail) akkountingizni kiriting!');
+            return;
+        }
+
+        let users = JSON.parse(localStorage.getItem('iq_platform_users') || '[]');
+
+        if (mode === 'new') {
+            if (!name) {
+                alert('Iltimos, ismingizni kiriting!');
+                return;
+            }
+            if (users.find(u => u.email === email)) {
+                alert('Bu Gmail akkounti allaqachon ro‘yxatdan o‘tgan!');
+                return;
+            }
+            if (users.find(u => u.name.toLowerCase() === name.toLowerCase())) {
+                alert('Bunday ismli foydalanuvchi allaqachon mavjud!');
+                return;
+            }
+
+            currentUser = { email, name, avatar: baseAvatar, maxIq: 0 };
+            users.push(currentUser);
+            localStorage.setItem('iq_platform_users', JSON.stringify(users));
+        } else {
+            const found = users.find(u => u.email === email);
+            if (!found) {
+                alert('Bunday Gmail akkounti topilmadi! Avval yangi profil yarating.');
+                return;
+            }
+            currentUser = found;
+        }
+
+        localStorage.setItem('iq_current_user', JSON.stringify(currentUser));
+        showStartMenu();
+    }
+
+    function showStartMenu() {
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('leaderboard-screen').classList.add('hidden');
+        document.getElementById('admin-screen').classList.add('hidden');
+        document.getElementById('start-screen').classList.remove('hidden');
+        document.getElementById('welcome-user-title').innerText = `Xush kelibsiz, ${currentUser.name}!`;
+        
+        if (currentUser.maxIq > 0) {
+            document.getElementById('record-display').innerText = `🏆 Shaxsiy rekord: ${currentUser.maxIq} IQ`;
+        } else {
+            document.getElementById('record-display').innerText = `🏆 Shaxsiy rekord: Hali test topshirmagansiz`;
+        }
+    }
+
+    function backToAuth() {
+        clearInterval(timerInterval);
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('leaderboard-screen').classList.add('hidden');
+        document.getElementById('admin-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('auth-screen').classList.remove('hidden');
+    }
+
+    function showLeaderboard() {
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('leaderboard-screen').classList.remove('hidden');
+        
+        let users = JSON.parse(localStorage.getItem('iq_platform_users') || '[]');
+        users.sort((a, b) => b.maxIq - a.maxIq);
+
+        const list = document.getElementById('leaderboard-list');
+        list.innerHTML = '';
+
+        if (users.length === 0) {
+            list.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:15px;">Hali foydalanuvchilar yo‘q.</p>';
+            return;
+        }
+
+        users.slice(0, 100).forEach((u, index) => {
+            list.innerHTML += `
+                <div class="lb-item">
+                    <div class="lb-user">
+                        <strong>#${index + 1}</strong>
+                        <img src="${u.avatar || 'https://via.placeholder.com/35'}" class="lb-avatar">
+                        <span>${u.name}</span>
+                    </div>
+                    <strong>${u.maxIq} IQ</strong>
+                </div>
+            `;
+        });
+    }
+
+    function openAdminModal() {
+        const adminName = prompt("Admin ismini kiriting:");
+        if (adminName !== "Xumoyun") return;
+        const adminCode = prompt("Admin kodini kiriting:");
+        if (adminCode === "2012+2012+2012") {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('admin-screen').classList.remove('hidden');
+            loadAdminUsers();
+        } else {
+            alert("Noto‘g‘ri kod!");
+        }
+    }
+
+    function loadAdminUsers() {
+        let users = JSON.parse(localStorage.getItem('iq_platform_users') || '[]');
+        const list = document.getElementById('admin-users-list');
+        list.innerHTML = '';
+
+        if (users.length === 0) {
+            list.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:15px;">Foydalanuvchilar mavjud emas.</p>';
+            return;
+        }
+
+        users.forEach((u, index) => {
+            list.innerHTML += `
+                <div class="lb-item">
+                    <div class="lb-user">
+                        <span>${index + 1}.</span>
+                        <img src="${u.avatar || 'https://via.placeholder.com/35'}" class="lb-avatar">
+                        <div>
+                            <strong>${u.name}</strong><br>
+                            <small style="color:#94a3b8;">${u.email}</small>
+                        </div>
+                    </div>
+                    <strong>${u.maxIq} IQ</strong>
+                </div>
+            `;
+        });
+    }
+
+    function toggleAIChat() {
+        const box = document.getElementById('ai-assistant-box');
+        box.classList.toggle('hidden');
+    }
+
+    function askPersonalAI() {
+        const input = document.getElementById('ai-user-question');
+        const history = document.getElementById('ai-chat-history');
+        const q = input.value.trim();
+        if (!q) return;
+
+        history.innerHTML += `<div class="msg-user">${q}</div>`;
+        input.value = '';
+        history.scrollTop = history.scrollHeight;
+
+        setTimeout(() => {
+            const answer = generateSmartAIResponse(q);
+            history.innerHTML += `<div class="msg-ai"><strong>🤖 Gemini AI:</strong> ${answer}</div>`;
+            history.scrollTop = history.scrollHeight;
+        }, 350);
+    }
+
+    function generateSmartAIResponse(query) {
+        const text = query.toLowerCase();
+        
+        const mathMatch = text.match(/(\d+)\s*([\+\-\*\/])\s*(\d+)/);
+        if (mathMatch) {
+            const a = parseFloat(mathMatch[1]);
+            const op = mathMatch[2];
+            const b = parseFloat(mathMatch[3]);
+            let res = 0;
+            if (op === '+') res = a + b;
+            if (op === '-') res = a - b;
+            if (op === '*') res = a * b;
+            if (op === '/') res = b !== 0 ? (a / b).toFixed(2) : "Nolga bo‘lish mumkin emas";
+            return `Matematik hisob-kitob bo‘yicha javob: <strong>${a} ${op} ${b} = ${res}</strong>.`;
+        }
+
+        if (text.includes('iq') || text.includes('230')) {
+            return "IQ (Intellekt koeffitsienti) insonning mantiqiy fikrlash, muammolarni tez hal qilish va naqshlarni aniqlash qobiliyatini o‘lchaydi. Ekspert rejimida barcha savollarga tez va aniq javob bersangiz, 230 IQ VIP sertifikatini qo‘lga kiritasiz!";
+        }
+        if (text.includes('salom') || text.includes('qalaysan')) {
+            return `Salom, ${currentUser ? currentUser.name : 'do‘stim'}! Men doim tayyorman. Qanday savolingiz yoki masalangiz bor?`;
+        }
+        if (text.includes('dasturlash') || text.includes('kod') || text.includes('html') || text.includes('js')) {
+            return "Dasturlashda eng muhimi mantiqiy fikrlash va algoritm tuzishdir. HTML tuzilma, CSS dizayn, JavaScript esa saytga jon bag‘ishlaydi. Xuddi hozirgi platformamiz kabi!";
+        }
+        if (text.includes('mantiq') || text.includes('topishmoq')) {
+            return "Mantiqiy savollarda shoshilmasdan shartning har bir so‘ziga e'tibor bering. Ko‘pincha javob savolning o‘zida yashiringan bo‘ladi.";
+        }
+        if (text.includes('kim yaratgan') || text.includes('admin')) {
+            return "Ushbu AI IQ 230 Pro platformasi maxsus loyiha asosida yaratilgan bo‘lib, ichiga aqlli AI tahlil tizimi integratsiya qilingan.";
+        }
+
+        return `Ajoyib savol! "${query}" mavzusi bo‘yicha tahlil: bu masala tizimli yondashuv va mantiqiy tahlilni talab qiladi. Agar aniqroq matematik misol yoki test savoli bo‘lsa, uni yozing — darhol yechimini ko‘rsataman!`;
+    }
+
+    const questionBank = {
+        kids: [
+            { skill: "Matematika", topic: "Ketma-ketlik", q: "Qatorni davom ettiring: 2, 4, 8, 16, ...", options: ["24", "32", "20", "30"], answer: 1 },
+            { skill: "Mantiq", topic: "Mantiq", q: "3 ta mushuk 3 ta sichqonni 3 daqiqada tutsa, 1 ta mushuk 1 ta sichqonni necha daqiqada tutadi?", options: ["1 daqiqa", "3 daqiqa", "9 daqiqa", "6 daqiqa"], answer: 1 },
+            { skill: "Diqqat", topic: "Diqqat", q: "Qorong‘i xonaga kirdingiz. Sizda 1 ta gugurt bor. Xonada sham va gaz plitasi bor. Birinchi nimani yoqasiz?", options: ["Shamni", "Gaz plitasini", "Gugurtni", "Pechni"], answer: 2 },
+            { skill: "Mantiq", topic: "Fizika", q: "Qaysi biri og‘irroq: 1 kg temirmi yoki 1 kg paxta?", options: ["1 kg temir", "1 kg paxta", "Ikkalasi teng", "Temir og‘ir"], answer: 2 },
+            { skill: "Mantiq", topic: "Oilaviy", q: "Oilada 5 ta o‘g‘il bor. Har bir o‘g‘ilning bittadan singlisi bor. Jami nechta farzand bor?", options: ["10 ta", "6 ta", "5 ta", "7 ta"], answer: 1 },
+            { skill: "Matematika", topic: "Hisob", q: "Daraxtda 10 ta qush o‘tirgan edi. Ovchi 1 tasini otib tushirdi. Daraxtda nechta qush qoldi?", options: ["9 ta", "0 ta (qolgani uchib ketdi)", "1 ta", "10 ta"], answer: 1 },
+            { skill: "Mantiq", topic: "Vaqt", q: "Yilning nechta oyida 28 kun bor?", options: ["1 tasida", "2 tasida", "Barcha 12 oyida", "6 tasida"], answer: 2 },
+            { skill: "Matematika", topic: "Sonlar", q: "1 dan 10 gacha bo‘lgan sonlar yig‘indisi nechaga teng?", options: ["45", "50", "55", "60"], answer: 2 },
+            { skill: "Diqqat", topic: "Topishmoq", q: "Nimani ko‘z bilan ko‘rib bo‘lmaydi, lekin ushlab bo‘ladi?", options: ["Shamolni", "Suvni", "O‘z qulog‘ingizni", "Quyoshni"], answer: 2 },
+            { skill: "Mantiq", topic: "Tezlik", q: "Poygada 2-o‘rindagi odamni quvib o‘tsangiz, nechanchi o‘ringa chiqasiz?", options: ["1-o‘ringa", "2-o‘ringa", "3-o‘ringa", "Oxirgi o‘ringa"], answer: 1 },
+            { skill: "Matematika", topic: "Geometriya", q: "Kvadratning bitta tomoni 5 sm bo‘lsa, uning perimetri nechaga teng?", options: ["25 sm", "20 sm", "15 sm", "10 sm"], answer: 1 },
+            { skill: "Mantiq", topic: "Tabiat", q: "Qaysi oyda odamlar eng kam uxlaydi?", options: ["Yanvarda", "Fevralda", "Martda", "Iyulda"], answer: 1 }
+        ],
+        adults: [
+            { skill: "Matematika", topic: "Sonlar qatori", q: "Qatorni davom ettiring: 2, 6, 12, 20, 30, ...", options: ["36", "40", "42", "44"], answer: 2 },
+            { skill: "Matematika", topic: "Algebra", q: "Kitob va daftar birgalikda 11000 so‘m. Kitob daftardan 10000 so‘m qimmat. Daftar necha so‘m?", options: ["1000 so‘m", "500 so‘m", "1500 so‘m", "2000 so‘m"], answer: 1 },
+            { skill: "Mantiq", topic: "Sillogizm", q: "Agar barcha Zlar X bo‘lsa, va ba'zi Xlar Y bo‘lsa, u holda:", options: ["Barcha Zlar Y", "Ba'zi Zlar Y bo‘lishi mumkin", "Hech bir Z Y emas", "Barcha Ylar Z"], answer: 1 },
+            { skill: "Matematika", topic: "Foizlar", q: "Mahsulot narxi avval 20% ga oshirildi, keyin 20% ga tushirildi. Dastlabki narx qanday o‘zgardi?", options: ["O‘zgarmadi", "4% ga kamaydi", "4% ga oshdi", "2% ga kamaydi"], answer: 1 },
+            { skill: "Mantiq", topic: "Analitika", q: "5 ta mashina 5 ta detalni 5 daqiqada tayyorlasa, 100 ta mashina 100 ta detalni necha daqiqada tayyorlaydi?", options: ["100 daqiqa", "5 daqiqa", "20 daqiqa", "1 daqiqa"], answer: 1 },
+            { skill: "Matematika", topic: "Qatorlar", q: "Qatorni davom ettiring: 1, 1, 2, 3, 5, 8, 13, ...", options: ["18", "20", "21", "24"], answer: 2 },
+            { skill: "Mantiq", topic: "Vaqt", q: "Soat 3:15 bo‘lganda soat va minut strelkalari orasidagi burchak necha gradus bo‘ladi?", options: ["0°", "7.5°", "15°", "5°"], answer: 1 },
+            { skill: "Diqqat", topic: "Kodlash", q: "Agar KITOB = 5, DAFTAR = 6 bo‘lsa, UNIVERSITET nechaga teng?", options: ["10", "11", "12", "9"], answer: 1 },
+            { skill: "Matematika", topic: "Tenglama", q: "3x + 7 = 28 bo‘lsa, x ning qiymati nechaga teng?", options: ["6", "7", "8", "9"], answer: 1 },
+            { skill: "Mantiq", topic: "Ehtimollik", q: "Qutida 4 ta oq va 6 ta qora shar bor. Qaramasdan olingan bitta sharning oq bo‘lish ehtimoli qancha?", options: ["40%", "60%", "50%", "25%"], answer: 0 },
+            { skill: "Matematika", topic: "Ketma-ketlik", q: "Qatorni davom ettiring: 81, 27, 9, 3, ...", options: ["0", "1", "1/3", "2"], answer: 1 }
+        ],
+        expert: [
+            { skill: "Matematika", topic: "Darajalar qatori", q: "Qatorni davom ettiring: 1, 4, 27, 256, ...", options: ["625", "1024", "3125", "1296"], answer: 2 },
+            { skill: "Matematika", topic: "Kombinatorika", q: "Majlisda 10 kishi bir-biri bilan bir martadan qo‘l berib ko‘rishdi. Jami nechta qo‘l siqish bo‘lgan?", options: ["100", "90", "45", "50"], answer: 2 },
+            { skill: "Mantiq", topic: "Kriptografiya", q: "Agar A=1, C=3, F=6, J=10 bo‘lsa, keyingi harf qaysi?", options: ["N (14)", "O (15)", "P (16)", "M (13)"], answer: 1 },
+            { skill: "Matematika", topic: "Tub sonlar", q: "Qatorni davom ettiring: 2, 3, 5, 7, 11, 13, 17, ...", options: ["18", "19", "21", "23"], answer: 1 },
+            { skill: "Mantiq", topic: "O‘sish", q: "Ko‘ldagi nilufar guli har kuni ikki baravar kattalashadi. U ko‘lni 48 kunda to‘liq qoplasa, yarmini necha kunda qoplagan?", options: ["24 kunda", "47 kunda", "36 kunda", "46 kunda"], answer: 1 },
+            { skill: "Matematika", topic: "Logarifm", q: "2 ning nechanchi darajasi 1024 ga teng?", options: ["8", "9", "10", "11"], answer: 2 },
+            { skill: "Mantiq", topic: "Paradoks", q: "Shaxmat taxtasida jami nechta kvadrat bor (1x1 dan 8x8 gacha)?", options: ["64", "128", "204", "256"], answer: 2 },
+            { skill: "Matematika", topic: "Qator", q: "Qatorni davom ettiring: 3, 7, 15, 31, 63, ...", options: ["125", "127", "126", "128"], answer: 1 },
+            { skill: "Mantiq", topic: "Algoritm", q: "8 ta bir xil ko‘rinishdagi tangadan 1 tasi soxta (yengilroq). Pallali tarozida eng kamida necha marta o‘lchab uni aniq topish mumkin?", options: ["1 marta", "2 marta", "3 marta", "4 marta"], answer: 1 },
+            { skill: "Matematika", topic: "Geometriya", q: "Kubning qirralari soni nechta?", options: ["6 ta", "8 ta", "12 ta", "16 ta"], answer: 2 },
+            { skill: "Mantiq", topic: "Sonlar nazariyasi", q: "Qatorni davom ettiring: 10, 18, 28, 40, 54, ...", options: ["68", "70", "72", "66"], answer: 1 }
+        ]
+    };
+
+    let activeQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timeLimit = 30;
+    let timeLeft = 30;
+    let timerInterval = null;
+    let totalTimeSpent = 0;
+    let isAnswered = false;
+    let aiHintsLeft = 2;
+    let hintUsedThisQuestion = false;
+    let QUESTIONS_PER_TEST = 10;
+
+    function shuffleArray(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function startTest(category) {
+        initAudio();
+        clearInterval(timerInterval);
+        currentQuestionIndex = 0;
+        score = 0;
+        totalTimeSpent = 0;
+        aiHintsLeft = 2;
+
+        const pool = shuffleArray(questionBank[category]);
+        QUESTIONS_PER_TEST = Math.min(10, pool.length);
+        activeQuestions = pool.slice(0, QUESTIONS_PER_TEST);
+
+        timeLimit = category === 'kids' ? 35 : (category === 'adults' ? 30 : 25);
+        
+        const catNames = { kids: "Bolalar", adults: "Kattalar", expert: "Ekspert (230 IQ)" };
+        document.getElementById('category-label').innerText = catNames[category];
+        document.getElementById('ai-hint-btn').disabled = false;
+        document.getElementById('ai-hint-btn').innerText = `🤖 AI 50/50 Yordam (${aiHintsLeft} ta qoldi)`;
+
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        clearInterval(timerInterval);
+        isAnswered = false;
+        hintUsedThisQuestion = false;
+        
+        const currentQ = activeQuestions[currentQuestionIndex];
+        
+        document.getElementById('progress-label').innerText = `Savol: ${currentQuestionIndex + 1} / ${QUESTIONS_PER_TEST}`;
+        document.getElementById('progress-fill').style.width = `${((currentQuestionIndex + 1) / QUESTIONS_PER_TEST) * 100}%`;
+        document.getElementById('topic-label').innerText = `${currentQ.skill} • ${currentQ.topic}`;
+        document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${currentQ.q}`;
+
+        const hintBtn = document.getElementById('ai-hint-btn');
+        hintBtn.disabled = aiHintsLeft <= 0;
+
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+
+        currentQ.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => handleAnswer(index, btn);
+            optionsContainer.appendChild(btn);
+        });
+
+        startTimer();
+    }
+
+    function useAIHint() {
+        if (aiHintsLeft <= 0 || hintUsedThisQuestion || isAnswered) return;
+        
+        const currentQ = activeQuestions[currentQuestionIndex];
+        const correctIndex = currentQ.answer;
+        const buttons = document.querySelectorAll('.option-btn');
+        
+        let wrongIndices = [];
+        buttons.forEach((_, idx) => {
+            if (idx !== correctIndex) wrongIndices.push(idx);
+        });
+        
+        wrongIndices = shuffleArray(wrongIndices).slice(0, 2);
+        wrongIndices.forEach(idx => {
+            buttons[idx].classList.add('eliminated');
+            buttons[idx].disabled = true;
+        });
+
+        aiHintsLeft--;
+        hintUsedThisQuestion = true;
+        const hintBtn = document.getElementById('ai-hint-btn');
+        hintBtn.innerText = `🤖 AI 50/50 Yordam (${aiHintsLeft} ta qoldi)`;
+        hintBtn.disabled = true;
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        timeLeft = timeLimit;
+        updateTimerUI();
+
+        timerInterval = setInterval(() => {
+            if (isAnswered) {
+                clearInterval(timerInterval);
+                return;
+            }
+            timeLeft--;
+            totalTimeSpent++;
+            updateTimerUI();
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                handleTimeOut();
+            }
+        }, 1000);
+    }
+
+    function updateTimerUI() {
+        const timerBox = document.getElementById('timer-box');
+        timerBox.innerText = `⏳ ${timeLeft}s`;
+        if (timeLeft <= 5) timerBox.classList.add('timer-warning');
+        else timerBox.classList.remove('timer-warning');
+    }
+
+    function handleAnswer(selectedIndex, clickedBtn) {
+        if (isAnswered) return;
+        isAnswered = true;
+        clearInterval(timerInterval);
+
+        const currentQ = activeQuestions[currentQuestionIndex];
+        const correctIndex = currentQ.answer;
+        const allButtons = document.querySelectorAll('.option-btn');
+        allButtons.forEach(b => b.disabled = true);
+
+        if (selectedIndex === correctIndex) {
+            score++;
+            clickedBtn.classList.add('correct');
+            playSound('correct');
+        } else {
+            clickedBtn.classList.add('wrong');
+            if (allButtons[correctIndex]) allButtons[correctIndex].classList.add('correct');
+            playSound('wrong');
+        }
+
+        setTimeout(() => {
+            nextQuestion();
+        }, 750);
+    }
+
+    function handleTimeOut() {
+        if (isAnswered) return;
+        isAnswered = true;
+        playSound('wrong');
+        const currentQ = activeQuestions[currentQuestionIndex];
+        const correctIndex = currentQ.answer;
+        const allButtons = document.querySelectorAll('.option-btn');
+        allButtons.forEach(b => b.disabled = true);
+        if (allButtons[correctIndex]) allButtons[correctIndex].classList.add('correct');
+
+        setTimeout(() => {
+            nextQuestion();
+        }, 750);
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < QUESTIONS_PER_TEST) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function generateSecureHash(name, score, iq) {
+        const raw = `${name}-${score}-${iq}-AI-IQ-SECURE-2026`;
+        let hash = 0;
+        for (let i = 0; i < raw.length; i++) {
+            hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+            hash |= 0;
+        }
+        return `AI-HASH: 0x${Math.abs(hash).toString(16).toUpperCase()}9F8A-VERIFIED`;
+    }
+
+    function showResult() {
+        clearInterval(timerInterval);
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+
+        document.getElementById('cert-name').innerText = `${currentUser.name} — Rasmiy IQ Sertifikati`;
+        const uniqueId = `IQ-AI-${Math.floor(100000 + Math.random() * 900000)}`;
+        document.getElementById('cert-id').innerText = `Sertifikat ID: ${uniqueId}`;
+
+        const accuracy = score / QUESTIONS_PER_TEST;
+        const finalIQ = Math.min(230, Math.round(80 + (accuracy * 150)));
+
+        document.getElementById('iq-value').innerText = finalIQ;
+        document.getElementById('stat-correct').innerText = `${score} / ${QUESTIONS_PER_TEST}`;
+        document.getElementById('stat-accuracy').innerText = `${Math.round(accuracy * 100)}%`;
+
+        let levelText = "O‘rtacha intellekt";
+        if (finalIQ >= 210) levelText = "Mutlaq Daho (VIP)";
+        else if (finalIQ >= 170) levelText = "Yuqori Intellekt";
+        else if (finalIQ >= 130) levelText = "Iste'dodli";
+        document.getElementById('iq-level').innerText = levelText;
+
+        const mins = Math.floor(totalTimeSpent / 60);
+        const secs = totalTimeSpent % 60;
+        document.getElementById('stat-time').innerText = mins > 0 ? `${mins} daq ${secs} son` : `${secs} soniya`;
+
+        document.getElementById('secure-hash-text').innerText = `🔒 ${generateSecureHash(currentUser.name, score, finalIQ)}`;
+
+        const feedback = document.getElementById('ai-result-feedback');
+        if (finalIQ >= 200) {
+            feedback.innerText = `Ajoyib natija, ${currentUser.name}! Sizning mantiqiy tahlil va tezkor fikrlash tezligingiz eng yuqori 1% foydalanuvchilar qatoriga kiradi. VIP Sertifikat sizga taqdim etildi!`;
+        } else if (finalIQ >= 140) {
+            feedback.innerText = `Juda yaxshi ko‘rsatkich! Matematik va mantiqiy savollarni yechish qobiliyatingiz yuqori. Ekspert rejimida yana bir bor urinib ko‘rib, 230 IQ cho‘qqisini zabt etishingiz mumkin.`;
+        } else {
+            feedback.innerText = `Yaxshi boshlanish! Mantiqiy mashqlarni ko‘proq ishlash orqali fikrlash tezligingizni va IQ ko‘rsatkichingizni yanada oshirishingiz mumkin.`;
+        }
+
+        const certCard = document.getElementById('cert-card');
+        const vipRibbon = document.getElementById('vip-ribbon');
+        const downloadBtn = document.getElementById('download-img-btn');
+
+        if (finalIQ >= 200) {
+            certCard.classList.add('vip-gold');
+            vipRibbon.classList.remove('hidden');
+            downloadBtn.classList.remove('hidden');
+            playSound('vip');
+        } else {
+            certCard.classList.remove('vip-gold');
+            vipRibbon.classList.add('hidden');
+            downloadBtn.classList.add('hidden');
+        }
+
+        if (finalIQ > currentUser.maxIq) {
+            currentUser.maxIq = finalIQ;
+            let users = JSON.parse(localStorage.getItem('iq_platform_users') || '[]');
+            users = users.map(u => u.email === currentUser.email ? currentUser : u);
+            localStorage.setItem('iq_platform_users', JSON.stringify(users));
+            localStorage.setItem('iq_current_user', JSON.stringify(currentUser));
+        }
+
+        document.getElementById('record-display').innerText = `🏆 Shaxsiy rekord: ${currentUser.maxIq} IQ`;
+    }
+
+    function downloadCertificateImage() {
+        const card = document.getElementById('cert-card');
+        html2canvas(card, { scale: 2, backgroundColor: null }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'AI_VIP_IQ_Sertifikat.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+
+    function backToMenu() {
+        clearInterval(timerInterval);
+        document.getElementById('result-screen').classList.add('hidden');
+        showStartMenu();
+    }
+</script>
+
+</body>
+</html>
